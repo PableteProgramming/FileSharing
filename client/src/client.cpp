@@ -4,8 +4,7 @@ int main(int argc, char const *argv[])
 {
 	int sock = 0;
 	struct sockaddr_in serv_addr;
-	char *hello = "Hello from client";
-	char buffer[1024] = {0};
+    bool running=false;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
@@ -32,8 +31,14 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	send(sock , hello , strlen(hello) , 0 );
-    read( sock , buffer, 1024);
-	std::cout<<buffer<<std::endl;
+    running=true;
+    while(running){
+        std::string message;
+        std::cout<<"send > ";
+        std::getline(std::cin,message);
+        SocketSend(sock,message);
+        std::string r= SocketRead(sock);
+        std::cout<<r<<std::endl;
+    }
 	return 0;
 }

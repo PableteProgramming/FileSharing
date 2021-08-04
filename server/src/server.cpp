@@ -6,8 +6,7 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
-	char buffer[1024] = {0};
-	char *hello = "Hello from server";
+    bool running=false;
 
 	server_info = socket(AF_INET, SOCK_STREAM, 0);
 	// Creating socket file descriptor
@@ -52,8 +51,13 @@ int main(int argc, char const *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	read(ClientSocket , buffer, 1024);
-    std::cout<<buffer<<std::endl;
-	send(ClientSocket , hello , strlen(hello) , 0 );
+    running=true;
+
+    while(running){
+        std::string message= SocketRead(ClientSocket);
+        std::string toSend= "message from client: "+message;
+	    SocketSend(ClientSocket,toSend);
+    }
+
 	return 0;
 }

@@ -3,4 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
+#include <func.hpp>
+
 const int PORT= 8080;
