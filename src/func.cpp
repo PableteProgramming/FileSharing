@@ -18,28 +18,50 @@ std::vector<std::string> SplitMessage(std::string message,int size){
     return r;
 }
 
+#ifdef __linux__
 void SocketSend(int sock,std::string message){
+#else
+void SocketSend(SOCKET sock,std::string message){
+#endif
     std::vector<std::string> splitted= SplitMessage(message,1022);
     for(int i=0; i<splitted.size()-1;i++){
         //std::cout<<"N"<<splitted[i]<<std::endl;
+#ifdef __linux__
         send(sock , std::string("N"+splitted[i]).c_str() , strlen(std::string("N"+splitted[i]).c_str()) , 0 );
         char temp[1]={0};
         read(sock,temp,1);
+#else
+        send(sock , std::string("N"+splitted[i]).c_str() , strlen(std::string("N"+splitted[i]).c_str()) , 0 );
+        char temp[1]= {0};
+        recv(sock, temp, sizeof(temp),0);
+#endif
     }
     //std::cout<<"Y"<<splitted[splitted.size()-1]<<std::endl;
+#ifdef __linux__
 	send(sock , std::string("Y"+splitted[splitted.size()-1]).c_str() , strlen(std::string("Y"+splitted[splitted.size()-1]).c_str()) , 0 );
     char temp[1]={0};
     read(sock,temp,1);
+#else
+
+#endif
 }
 
+#ifdef __linux__
 std::string SocketRead(int sock){
-    bool recv=true;
+#else
+std::string SocketRead(SOCKET sock){
+#endif
+    bool rec=true;
     std::string r="";
-    while(recv){
+    while(rec){
         char buffer[1024]={0};
+#ifdef __linux__
 	    read(sock , buffer, 1024);
+#else
+	    recv(sock, buffer, sizeof(buffer),0);
+#endif
         if(buffer[0]=='Y'){
-            recv=false;
+            rec=false;
         }
         r+= GetFrom(std::string(buffer),1);
         send(sock,"Y",1,0);
