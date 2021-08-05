@@ -92,9 +92,14 @@ int main(int argc, char const *argv[])
         std::string message;
         std::cout<<"send > ";
         std::getline(std::cin,message);
-        SocketSend(sock,message);
-        std::string r= SocketRead(sock);
-        std::cout<<r<<std::endl;
+		if(message!=""){
+			SocketSend(sock,message);
+			std::string r= SocketRead(sock);
+			if(message=="exit"){
+				return 0;
+			}
+			std::cout<<r<<std::endl;
+		}
     }
 	return 0;
 }

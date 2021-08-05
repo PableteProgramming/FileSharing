@@ -1,8 +1,11 @@
 #include <server.hpp>
 
+std::vector<Client> clients;
+
 int main(int argc, char const *argv[])
 {
     bool running=false;
+	clients.clear();
 #ifdef __linux__
 	int server_info;
 	struct sockaddr_in address;
@@ -109,28 +112,45 @@ int main(int argc, char const *argv[])
 #endif
     running=true;
 
+	std::thread Exiting(ExitClients,&running);
+
+	while(running){
 #ifdef __linux__
-	int ClientSocket= accept(server_info, (struct sockaddr *)&address,(socklen_t*)&addrlen);
-	if (ClientSocket < 0)
-	{
-		std::cout<<"accept"<<std::endl;
-		exit(EXIT_FAILURE);
-	}
+		int ClientSocket= accept(server_info, (struct sockaddr *)&address,(socklen_t*)&addrlen);
+		if (ClientSocket < 0)
+		{
+			std::cout<<"accept"<<std::endl;
+			exit(EXIT_FAILURE);
+		}
 #else
-	ClientSocket = accept(server_info, NULL, NULL);
-	if (ClientSocket == INVALID_SOCKET) {
-		printf("accept failed with error: %d\n", WSAGetLastError());
-		closesocket(server_info);
-		WSACleanup();
-		return 1;
-	}
+		ClientSocket = accept(server_info, NULL, NULL);
+		if (ClientSocket == INVALID_SOCKET) {
+			printf("accept failed with error: %d\n", WSAGetLastError());
+			closesocket(server_info);
+			WSACleanup();
+			return 1;
+		}
 #endif
-
-    while(running){
-        std::string message= SocketRead(ClientSocket);
-        std::string toSend= "message from client: "+message;
-	    SocketSend(ClientSocket,toSend);
-    }
-
+		Client client(ClientSocket);
+		clients.push_back(client);
+		clients[clients.size()-1].StartThread(&running);
+	}
+	Exiting.join();
 	return 0;
+}
+
+void ExitClients(bool* running){
+	while((*running)){
+		std::vector<int> exiting;
+		exiting.clear();
+		for(int i=0; i<clients.size();i++){
+			if(clients[i].GetExit()){
+				exiting.push_back(i);
+			}
+		}
+		for(int i=exiting.size()-1;i>=0;i--){
+			clients[exiting[i]].JoinThread();
+			clients.erase(clients.begin()+exiting[i]);
+		}
+	}
 }

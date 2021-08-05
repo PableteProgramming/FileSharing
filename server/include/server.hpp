@@ -10,6 +10,10 @@
 #endif
 #include <iostream>
 #include <string.h>
-#include <func.hpp>
+//#include <func.hpp>
+#include <vector>
+#include <Client.hpp>
 
 const int PORT=8080;
+
+void ExitClients(bool*);

@@ -23,7 +23,7 @@ all: $(out_file)
 
 $(out_file): $(func_obj_files) $(obj_files)
 	mkdir -p $(out_dir)
-	$(CXX) -o $(out_file) $(obj_files) $(func_obj_files)
+	$(CXX) -o $(out_file) $(obj_files) $(func_obj_files) -pthread
 
 $(func_obj_files): $(func_obj_dir)/%.o: $(func_src_dir)/%.cpp
 	mkdir -p $(func_obj_dir)
