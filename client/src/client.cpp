@@ -2,9 +2,10 @@
 
 int main(int argc, char const *argv[])
 {
+    bool running=false;
+#ifdef __linux__
 	int sock = 0;
 	struct sockaddr_in serv_addr;
-    bool running=false;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
@@ -30,6 +31,61 @@ int main(int argc, char const *argv[])
 		std::cout<<std::endl<<"Connection Failed"<<std::endl;
 		return -1;
 	}
+#else
+	#pragma comment (lib, "Ws2_32.lib")
+	#pragma comment (lib, "Mswsock.lib")
+	#pragma comment (lib, "AdvApi32.lib")
+	WSADATA wsaData;
+	SOCKET sock = INVALID_SOCKET;
+	struct addrinfo* result = NULL;
+	struct addrinfo* ptr = NULL;
+	struct addrinfo hints;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != 0) {
+		printf("Error when init WSAStartup!\n");
+		exit(1);
+	}
+	ZeroMemory(&hints, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+
+	iResult = getaddrinfo("127.0.0.1", std::to_string(PORT).c_str(), &hints, &result);
+	if (iResult != 0) {
+		printf("getaddrinfo failed with error: %d\n", iResult);
+		WSACleanup();
+		return 1;
+	}
+
+	// Attempt to connect to an address until one succeeds
+	for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
+
+		// Create a SOCKET for connecting to server
+		sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+		if (sock == INVALID_SOCKET) {
+			printf("socket failed with error: %ld\n", WSAGetLastError());
+			WSACleanup();
+			return 1;
+		}
+
+		// Connect to server.
+		iResult = connect(sock, ptr->ai_addr, (int)ptr->ai_addrlen);
+		if (iResult == SOCKET_ERROR) {
+			closesocket(sock);
+			sock = INVALID_SOCKET;
+			continue;
+		}
+		break;
+	}
+
+	freeaddrinfo(result);
+
+	if (sock == INVALID_SOCKET) {
+		printf("Unable to connect to server!\n");
+		WSACleanup();
+		return 1;
+	}
+#endif
 
     running=true;
     while(running){

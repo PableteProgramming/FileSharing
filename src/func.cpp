@@ -25,24 +25,20 @@ void SocketSend(SOCKET sock,std::string message){
 #endif
     std::vector<std::string> splitted= SplitMessage(message,1022);
     for(int i=0; i<splitted.size()-1;i++){
-        //std::cout<<"N"<<splitted[i]<<std::endl;
-#ifdef __linux__
-        send(sock , std::string("N"+splitted[i]).c_str() , strlen(std::string("N"+splitted[i]).c_str()) , 0 );
-        char temp[1]={0};
-        read(sock,temp,1);
-#else
         send(sock , std::string("N"+splitted[i]).c_str() , strlen(std::string("N"+splitted[i]).c_str()) , 0 );
         char temp[1]= {0};
+#ifdef __linux__
+        read(sock,temp,1);
+#else    
         recv(sock, temp, sizeof(temp),0);
 #endif
     }
-    //std::cout<<"Y"<<splitted[splitted.size()-1]<<std::endl;
-#ifdef __linux__
-	send(sock , std::string("Y"+splitted[splitted.size()-1]).c_str() , strlen(std::string("Y"+splitted[splitted.size()-1]).c_str()) , 0 );
+    send(sock , std::string("Y"+splitted[splitted.size()-1]).c_str() , strlen(std::string("Y"+splitted[splitted.size()-1]).c_str()) , 0 );
     char temp[1]={0};
+#ifdef __linux__
     read(sock,temp,1);
 #else
-
+    recv(sock,temp,sizeof(temp),0);
 #endif
 }
 
