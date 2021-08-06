@@ -13,3 +13,5 @@
 #include <func.hpp>
 
 const int PORT= 8080;
+
+void clearScreen();

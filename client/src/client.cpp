@@ -87,19 +87,45 @@ int main(int argc, char const *argv[])
 	}
 #endif
 
+	std::string os= SocketRead(sock);
+	SocketSend(sock,"K");
     running=true;
     while(running){
         std::string message;
         std::cout<<"send > ";
         std::getline(std::cin,message);
 		if(message!=""){
-			SocketSend(sock,message);
-			std::string r= SocketRead(sock);
-			if(message=="exit"){
-				return 0;
+			bool clear=false;
+			if(os=="W"){
+				if(message=="cls"){
+					clear=true;
+				}
 			}
-			std::cout<<r<<std::endl;
+			else if(os=="L"){
+				if(message=="clear"){
+					clear=true;
+				}
+			}
+			if(!clear){
+				SocketSend(sock,message);
+				std::string r= SocketRead(sock);
+				if(message=="exit"){
+					return 0;
+				}
+				std::cout<<r<<std::endl;
+			}
+			else{
+				clearScreen();
+			}
 		}
     }
 	return 0;
+}
+
+void clearScreen(){
+#ifdef __linux__
+	system("clear");
+#else
+	system("cls");
+#endif
 }

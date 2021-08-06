@@ -72,3 +72,29 @@ std::string GetFrom(std::string s,int index){
     }
     return r;
 }
+
+std::vector<std::string> Split(std::string s,char delimiter){
+    std::string temp="";
+    std::vector<std::string> r;
+    r.clear();
+    for(int i=0; i<s.size();i++){
+        if(s[i]==delimiter){
+            r.push_back(temp);
+            temp="";
+        }
+        else{
+            temp+= s[i];
+        }
+    }
+    r.push_back(temp);
+    return r;
+}
+
+std::string Join(std::vector<std::string> s,char c){
+    std::string r="";
+    for(int i=0; i<s.size();i++){
+        r+=s[i];
+        r+= c;
+    }
+    return r;
+}

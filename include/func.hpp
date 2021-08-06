@@ -22,3 +22,5 @@ std::string SocketRead(SOCKET);
 #endif
 std::vector<std::string> SplitMessage(std::string,int);
 std::string GetFrom(std::string,int);
+std::vector<std::string> Split(std::string,char);
+std::string Join(std::vector<std::string>,char);

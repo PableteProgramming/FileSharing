@@ -1,8 +1,10 @@
 #include <thread>
 #include <func.hpp>
+#include <Shell.hpp>
 
 class Client{
 private:
+    Shell* shell;
     bool exit;
     std::thread* Thread;
 #ifdef __linux__

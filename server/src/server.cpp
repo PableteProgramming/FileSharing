@@ -131,6 +131,9 @@ int main(int argc, char const *argv[])
 			return 1;
 		}
 #endif
+		//Send os info
+		SocketSend(ClientSocket,OS);
+		SocketRead(ClientSocket);
 		Client client(ClientSocket);
 		clients.push_back(client);
 		clients[clients.size()-1].StartThread(&running);
