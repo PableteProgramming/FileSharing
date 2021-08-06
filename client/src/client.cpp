@@ -2,6 +2,11 @@
 
 int main(int argc, char const *argv[])
 {
+	if(argc<=1){
+		std::cout<<"Please input the ip to connect"<<std::endl;
+		return 1;
+	}
+	std::string ip= std::string(argv[1]);
     bool running=false;
 #ifdef __linux__
 	int sock = 0;
@@ -18,7 +23,7 @@ int main(int argc, char const *argv[])
 	serv_addr.sin_port = htons(PORT);
 	
 	// Convert IPv4 and IPv6 addresses from text to binary form
-    int result= inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
+    int result= inet_pton(AF_INET, ip.c_str(), &serv_addr.sin_addr);
 	if(result <=0)
 	{
 		std::cout<<std::endl<<"Invalid address/ Address not supported"<<std::endl;
@@ -50,7 +55,7 @@ int main(int argc, char const *argv[])
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
-	iResult = getaddrinfo("127.0.0.1", std::to_string(PORT).c_str(), &hints, &result);
+	iResult = getaddrinfo(ip.c_str(), std::to_string(PORT).c_str(), &hints, &result);
 	if (iResult != 0) {
 		printf("getaddrinfo failed with error: %d\n", iResult);
 		WSACleanup();

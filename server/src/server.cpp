@@ -131,9 +131,11 @@ int main(int argc, char const *argv[])
 			return 1;
 		}
 #endif
+		std::cout<<"New client accepted !"<<std::endl;
 		//Send os info
 		SocketSend(ClientSocket,OS);
 		SocketRead(ClientSocket);
+		std::cout<<"all info send"<<std::endl;
 		Client client(ClientSocket);
 		clients.push_back(client);
 		clients[clients.size()-1].StartThread(&running);
@@ -154,6 +156,7 @@ void ExitClients(bool* running){
 		for(int i=exiting.size()-1;i>=0;i--){
 			clients[exiting[i]].JoinThread();
 			clients.erase(clients.begin()+exiting[i]);
+			std::cout<<"One client exited"<<std::endl;
 		}
 	}
 }
