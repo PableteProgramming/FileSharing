@@ -31,4 +31,4 @@ $(func_obj_files): $(func_obj_dir)/%.o: $(func_src_dir)/%.cpp
 
 $(obj_files): $(obj_dir)/%.o: $(src_dir)/%.cpp
 	mkdir -p $(obj_dir)
-	$(CXX) -c -o $@ $< -I$(inc_dir) -I$(func_inc_dir)
+	$(CXX) -c -o $@ $< -I$(inc_dir) -I$(func_inc_dir) -std=c++17
