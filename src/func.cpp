@@ -79,14 +79,18 @@ std::vector<std::string> Split(std::string s,char delimiter){
     r.clear();
     for(int i=0; i<s.size();i++){
         if(s[i]==delimiter){
-            r.push_back(temp);
+            if(temp!="" && temp[0]!=delimiter){
+                r.push_back(temp);
+            }
             temp="";
         }
         else{
             temp+= s[i];
         }
     }
-    r.push_back(temp);
+    if(temp!="" && temp[0]!=delimiter){
+        r.push_back(temp);
+    }
     return r;
 }
 
